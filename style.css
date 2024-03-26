@@ -1,0 +1,45 @@
+body {
+    background-color: #292929;
+    color: white;
+    text-align: center;
+}
+
+#lista_de_tarefas, #lista_de_tarefas_ocultas {
+    list-style-type: none;
+}
+
+.btn {
+    border: none;
+    background: none;
+    padding: 0;
+    color: white;
+    cursor: pointer;
+    padding-left: 10px;
+}
+
+.imgTarefa {
+    width: 25px;
+    height: 25px;
+}
+
+p {
+    display: inline;
+}
+
+#input_nova_tarefa {
+    width: 300px;
+    height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.btnAdicionarTareafa {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+li {
+    font-size: 22px;
+}

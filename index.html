@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+    <title>To-Do</title>
+</head>
+<body>
+    <h2>To-Do List</h2>
+
+    <div id="div_area_nova_tarefa">
+        <label for="input_nova_tarefa">Adicionar Tarefa</label>
+        <br><br>
+        <input type="text" id="input_nova_tarefa" placeholder="Descrição">
+        <button onclick="adicionaTarefaNaLista()" class="btnAdicionarTareafa">+</button>
+    </div>
+
+    <div id="div_lista_de_tarefas">
+        <ul id="lista_de_tarefas">
+        </ul>
+    </div>   
+    
+    <button class="btn" id="btnTarefasOcultas" onclick="alteraVisibilidadeDiv()">Mostrar tarefas ocultas</button>
+
+    <div id="div_tarefas_ocultas" style="display: none;">
+        <ul id="lista_de_tarefas_ocultas">
+        </ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
