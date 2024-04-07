@@ -1,35 +1,56 @@
-function adicionaTarefaNaLista() {
+const tarefasArmazenadas = localStorage.getItem('tarefas')
+let listaTarefas
 
-    // seleciona o elemento de input text que tem o texto da nova tarefa
-    const novaTarefa = document.getElementById('input_nova_tarefa').value
+if (tarefasArmazenadas == '' || tarefasArmazenadas == null) {
+    localStorage.setItem('tarefas', '[]')
+    listaTarefas = JSON.parse('[]')
+} else {
+    listaTarefas = JSON.parse(tarefasArmazenadas)
+}
+
+for (let i in listaTarefas) {
+    item = listaTarefas[i]
+    criaNovoItem(item.descricao, item.id, item.oculta, item.concluida, salvaTarefa = false)
+}
+
+
+function adicionaTarefa() {
+
+    const inputNovaTarefa = document.getElementById('input_nova_tarefa')
+    const novaTarefa = inputNovaTarefa.value;
 
     if (novaTarefa == '') {
         alert('A tarefa precisa de uma descrição.')
     } else {
-        criaNovoItemDaLista(novaTarefa)
-        document.getElementById('input_nova_tarefa').value = ''
+        criaNovoItem(novaTarefa)
+        inputNovaTarefa.value = ''
     } 
 }
 
 
-function criaNovoItemDaLista(textoDaTarefa) {
-    
-    // recupera a lista de tarefas
-    const listaTarefas = document.getElementById('lista_de_tarefas')
-    
+function criaNovoItem(textoTarefa, id = 0, oculta = false, concluida = false , salvaTarefa = true) {
+
     // guarda o tamanho da lista de tarefas
-    let qtdTarefas = listaTarefas.children.length + lista_de_tarefas_ocultas.children.length
+    let qtdTarefas = listaTarefas.length
+
+    const liListaTarefas = document.getElementById('lista_de_tarefas')
+    const liListaTarefasOcultas = document.getElementById('lista_de_tarefas_ocultas')
 
     // cria um novo elemento do tipo li e um do tipo p
     const novoItem = document.createElement('li')
-    const textoTarefa = document.createElement('p')
+    const pTarefa = document.createElement('p')
 
     // adiciona o texto digitado no texto da tarefa
-    textoTarefa.innerText = textoDaTarefa
-    novoItem.appendChild(textoTarefa)
+    pTarefa.innerText = textoTarefa
+    novoItem.appendChild(pTarefa)
     
     // adiciona um ID no novo elemento
-    novoItem.id = `tarefa_id_${qtdTarefas++}`
+    if (salvaTarefa) {
+        novoItem.id = `${qtdTarefas++}`
+        salvaNovoItem(novoItem.id, textoTarefa)
+    } else {
+        novoItem.id = id
+    }
 
     // cria os botões de interação
     novoItem.appendChild(criaBtnCheck(novoItem.id))
@@ -37,91 +58,82 @@ function criaNovoItemDaLista(textoDaTarefa) {
     novoItem.appendChild(criaBtnEye(novoItem.id))
     novoItem.appendChild(criaBtnTrash(novoItem.id))
 
-    // adiciona o novo item na lista de tarefas
-    listaTarefas.appendChild(novoItem)
+    if (concluida) {
+        novoItem.className = 'tarefaConcluida'
+    }
+
+    if (oculta) {
+        liListaTarefasOcultas.appendChild(novoItem)
+    } else {
+        liListaTarefas.appendChild(novoItem)
+    }
+    
 }
 
+
+function salvaNovoItem(idTarefa, textoTarefa) {
+
+    const novoItem = {'id': idTarefa, 'descricao': textoTarefa, 'concluida': false, 'oculta': false}
+    listaTarefas.push(novoItem)
+    listaJson = JSON.stringify(listaTarefas) 
+    localStorage.setItem('tarefas', listaJson)
+
+}
+
+
+function criaBotao(idTarefa, iconeSrc, onclickFunction) {
+    const botao = document.createElement('button');
+    botao.setAttribute('class', 'btn');
+
+    const imgIcone = document.createElement('img');
+    imgIcone.setAttribute('src', iconeSrc);
+    imgIcone.setAttribute('class', 'imgTarefa');
+
+    botao.appendChild(imgIcone);
+
+    botao.setAttribute('onclick', `${onclickFunction}('${idTarefa}')`);
+    return botao;
+}
 
 function criaBtnCheck(idTarefa) {
-
-    const inputCheck = document.createElement('button')
-    inputCheck.setAttribute('class', 'btn')
-
-    const imgCheck = document.createElement('img')
-    imgCheck.setAttribute('src', './assets/imgs/check.png')
-    imgCheck.setAttribute('class', 'imgTarefa')
-    imgCheck.setAttribute('style', 'width: 30px; height:30px;')
-
-    inputCheck.appendChild(imgCheck)
-
-    inputCheck.setAttribute('onclick', `mudaEstadoTarefa('${idTarefa}')`)
-    return inputCheck
+    return criaBotao(idTarefa, './assets/imgs/check.png', 'mudaEstadoTarefa');
 }
-
 
 function criaBtnEdit(idTarefa) {
-
-    const inputEdit = document.createElement('button')
-    inputEdit.setAttribute('class', 'btn')
-
-    const imgEdit = document.createElement('img')
-    imgEdit.setAttribute('src', './assets/imgs/pencil.png')
-    imgEdit.setAttribute('class', 'imgTarefa')
-
-    inputEdit.appendChild(imgEdit)
-
-    inputEdit.setAttribute('onclick', `editaTarefa('${idTarefa}')`)
-    return inputEdit
+    return criaBotao(idTarefa, './assets/imgs/pencil.png', 'editaTarefa');
 }
-
 
 function criaBtnEye(idTarefa) {
-
-    const inputEye = document.createElement('button')
-    inputEye.setAttribute('class', 'btn')
-
-    const imgEye = document.createElement('img')
-    imgEye.setAttribute('src', './assets/imgs/eye.png')
-    imgEye.setAttribute('class', 'imgTarefa')
-
-    inputEye.appendChild(imgEye)
-
-    inputEye.setAttribute('onclick', `alteraVisibilidadeTarefa('${idTarefa}')`)
-    return inputEye
+    return criaBotao(idTarefa, './assets/imgs/eye.png', 'alteraVisibilidadeTarefa');
 }
 
-
 function criaBtnTrash(idTarefa) {
-
-    const inputTrash = document.createElement('button')
-    inputTrash.setAttribute('class', 'btn')
-
-    const imgTrash = document.createElement('img')
-    imgTrash.setAttribute('src', './assets/imgs/trash.png')
-    imgTrash.setAttribute('class', 'imgTarefa')
-
-    inputTrash.appendChild(imgTrash)
-
-    inputTrash.setAttribute('onclick', `excluiTarefa('${idTarefa}')`)
-    return inputTrash
+    return criaBotao(idTarefa, './assets/imgs/trash.png', 'excluiTarefa');
 }
 
 
 function mudaEstadoTarefa(idTarefa) {
 
     const tarefaSelecionada = document.getElementById(idTarefa)
+    const itemSelecionado = listaTarefas[idTarefa]
 
-    if (tarefaSelecionada.style.textDecoration == 'line-through') {
-        tarefaSelecionada.style = 'text-decoration: none;'
+    if (itemSelecionado.concluida) {
+        tarefaSelecionada.className = ''
+        itemSelecionado.concluida = false
     } else {
-        tarefaSelecionada.style = 'text-decoration: line-through;'
+        tarefaSelecionada.className = 'tarefaConcluida'
+        itemSelecionado.concluida = true
     }
+
+    localStorage.setItem('tarefas', JSON.stringify(listaTarefas))
+    
 }
 
 
 function editaTarefa(idTarefa) {
 
     const tarefaSelecionada = document.getElementById(idTarefa)
+    const itemSelecionado = listaTarefas[idTarefa]
 
     novoTexto = prompt('Nova descrição:')
 
@@ -130,7 +142,10 @@ function editaTarefa(idTarefa) {
         editaTarefa(idTarefa)
     } else {
         tarefaSelecionada.children[0].innerText = novoTexto;
-    }  
+        itemSelecionado.descricao = novoTexto;
+    }
+    
+    localStorage.setItem('tarefas', JSON.stringify(listaTarefas))
 }
 
 
@@ -141,7 +156,11 @@ function excluiTarefa(idTarefa) {
     
     if (confirmacao) {
         tarefaSelecionada.remove()
+        const incice = listaTarefas.findIndex(item => item.id === idTarefa);
+        listaTarefas.splice(incice, 1)
     }
+
+    localStorage.setItem('tarefas', JSON.stringify(listaTarefas))
 
 }
 
@@ -149,14 +168,22 @@ function excluiTarefa(idTarefa) {
 function alteraVisibilidadeTarefa(idTarefa) {
 
     const tarefaSelecionada = document.getElementById(idTarefa)
-    const listaTarefasOcultas = document.getElementById('lista_de_tarefas_ocultas')
+    const itemSelecionado = listaTarefas[idTarefa]
+    const liListaTarefasOcultas = document.getElementById('lista_de_tarefas_ocultas')
+    const liListaTarefas = document.getElementById('lista_de_tarefas')
 
-    if (tarefaSelecionada.style.textDecoration == 'line-through') {
-        listaTarefasOcultas.appendChild(tarefaSelecionada)
+    if (itemSelecionado.concluida == true && itemSelecionado.oculta == false) {
+        liListaTarefasOcultas.appendChild(tarefaSelecionada)
+        itemSelecionado.oculta = true
+    } else if (itemSelecionado.oculta == true) {
+        liListaTarefas.appendChild(tarefaSelecionada)
+        itemSelecionado.oculta = false
     } else {
         alert('A tarefa precisa ser concluída para ser ocultada.')
     }
 
+    localStorage.setItem('tarefas', JSON.stringify(listaTarefas))
+    
 }
 
 

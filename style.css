@@ -43,3 +43,7 @@ p {
 li {
     font-size: 22px;
 }
+
+.tarefaConcluida {
+    text-decoration: line-through;
+}
